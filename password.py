@@ -1,10 +1,9 @@
 import random
 import string
+import streamlit as st
 
 def generate_password(length=12, use_upper=True, use_digits=True, use_symbols=True):
-    # Start with lowercase letters
     characters = string.ascii_lowercase
-    
     if use_upper:
         characters += string.ascii_uppercase
     if use_digits:
@@ -18,14 +17,17 @@ def generate_password(length=12, use_upper=True, use_digits=True, use_symbols=Tr
     password = ''.join(random.choice(characters) for _ in range(length))
     return password
 
-# Ask the user for their preferences
-try:
-    length = int(input("Enter desired password length: "))
-    use_upper = input("Include uppercase letters? (y/n): ").lower() == 'y'
-    use_digits = input("Include digits? (y/n): ").lower() == 'y'
-    use_symbols = input("Include symbols? (y/n): ").lower() == 'y'
+# Streamlit app
+st.title("🔐 Password Generator")
 
-    password = generate_password(length, use_upper, use_digits, use_symbols)
-    print(f"\nGenerated Password: {password}")
-except ValueError:
-    print("Please enter a valid number.")
+length = st.number_input("Password length", min_value=4, max_value=100, value=12)
+use_upper = st.checkbox("Include uppercase letters", value=True)
+use_digits = st.checkbox("Include digits", value=True)
+use_symbols = st.checkbox("Include symbols", value=True)
+
+if st.button("Generate Password"):
+    try:
+        password = generate_password(length, use_upper, use_digits, use_symbols)
+        st.success(f"Generated Password: `{password}`")
+    except ValueError as e:
+        st.error(str(e))
